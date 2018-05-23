@@ -204,7 +204,7 @@ elif x1 == x2:
 
 
 #Color beginning and end red
-g.addPoint(x1, y1, (0, 1, 0))
+g.addPoint(x1, y1, (1, 0, 0))
 g.addPoint(x2, y2, (1, 0, 0))
 
 #Draw grid with points
