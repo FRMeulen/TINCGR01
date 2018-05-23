@@ -1,13 +1,10 @@
+#Imports
 from grid import *
 from random import randint
 
-debug = True
+debug = True	#Boolean for debug mode
 
 g = Grid(50, 50)	#Grid with tiles
-
-#Booleans for special occasions
-straightVertical = False
-straightHorizontal = False
 
 #Coordinates of two points
 x1 = randint(0, 49)
@@ -15,32 +12,35 @@ y1 = randint(0, 49)
 x2 = randint(0, 49)
 y2 = randint(0, 49)
 
-#Set starting points in red
-print("Point 1: X:", x1, "Y:", y1)
-print("Point 2: X:", x2, "Y:", y2)
+if debug:
+	#Print x's and y's of points
+	print("Point 1: X:", x1, "Y:", y1)
+	print("Point 2: X:", x2, "Y:", y2)
 
 #Methods
-def derivative(hor1, ver1, hor2, ver2):
+def derivativeY(hor1, ver1, hor2, ver2):
 	deltaX = hor2 - hor1	#x2 - x1
 	deltaY = ver2 - ver1	#y2 - y1
 	
-	#If straight vertical line
-	if deltaX == 0:
-		straightVertical = True
-	
+	coefficientY = 0	#Default value
+
 	#If not a straight horizontal line
 	if deltaY != 0:
-		coefficient = deltaX / deltaY
+		coefficientY = deltaX / deltaY
 	
-	#If straight horizontal line
-	else:
-		straightHorizontal = True
-		coefficient = 0
-	
-	return coefficient
+	return coefficientY
 
-def addNextPoint(lastX, lastY, coeff):
-	g.addPoint(lastX + coeff, lastY + 1)
+def derivativeX(hor1, ver1, hor2, ver2):
+	deltaX = hor2 - hor1	#x2 - x1
+	deltaY = ver2 - ver1	#y2 - y1
+
+	coefficientX = 0	#Default value
+
+	#If not a straight vertical line
+	if deltaX != 0:
+		coefficientX = deltaY / deltaX
+
+	return coefficientX
 
 def verticalLine(x, bottomY, topY):
 	for y in range(bottomY, topY):
@@ -50,11 +50,9 @@ def horizontalLine(leftX, rightX, y):
 	for x in range(leftX, rightX):
 		g.addPoint(x, y)
 
-def diagonalLine(leftX, rightX, topY, bottomY):
-	return 0
-
 #Logic
-c = derivative(x1, y1, x2, y2)	#Coefficient of line between points
+c1 = derivativeY(x1, y1, x2, y2)	#Coefficient around y of line between points
+c2 = derivativeX(x1, y1, x2, y2)	#Coefficient around x of line between points
 
 #Determine direction of line
 if x1 > x2:
@@ -64,15 +62,26 @@ if x1 > x2:
 		tempX = x2
 		tempY = y2
 
+		#Draw line calculated around deltaY
 		while tempY < y1:
-			addNextPoint(tempX, tempY, c)
-			tempX += c
+			tempX += c1
 			tempY += 1
+			g.addPoint(tempX, tempY)
+
+		#Reset temp values		
+		tempX = x2
+		tempY = y2
+
+		#Draw line calculated around deltaX
+		while tempX < x1:
+			tempX += 1
+			tempY += c2
+			g.addPoint(tempX, tempY)
 
 		if debug:
 			print("Point 1 is below and to the right of point 2")
-			print("Coefficient is positive, line goes from 2 to 1")
-			print(c)
+			print("Y coefficient:", c1)
+			print("X coefficient:", c2)
 
 	elif y2 > y1:
 		#Point 1 is above and to the right of point 2
@@ -80,16 +89,26 @@ if x1 > x2:
 		tempX = x1
 		tempY = y1
 
+		#Draw line calculated around deltaY
 		while tempY < y2:
-			print("Temp X:", tempX)
-			addNextPoint(tempX, tempY, c)
-			tempX += c
+			tempX += c1
 			tempY += 1
+			g.addPoint(tempX, tempY)
+
+		#Reset temp values
+		tempX = x2
+		tempY = y2
+
+		#Draw line calculated around deltaX
+		while tempX < x1:
+			tempX += 1
+			tempY += c2
+			g.addPoint(tempX, tempY)
 
 		if debug:
 			print("Point 1 is above and to the right of point 2")
-			print("Coefficient is negative, line goes from 1 to 2")
-			print(c)
+			print("Y coefficient:", c1)
+			print("X coefficient:", c2)
 
 	elif y1 == y2:
 		#Point 1 is to the right of point 2
@@ -106,16 +125,26 @@ elif x2 > x1:
 		tempX = x2
 		tempY = y2
 
+		#Draw line calculated around deltaY
 		while tempY < y1:
-			print("Temp X:", tempX)
-			addNextPoint(tempX, tempY, c)
-			tempX += c
+			tempX += c1
 			tempY += 1
+			g.addPoint(tempX, tempY)
+
+		#Reset temp values
+		tempX = x1
+		tempY = y1
+
+		#Draw line calculated around deltaX
+		while tempX < x2:
+			tempX += 1
+			tempY += c2
+			g.addPoint(tempX, tempY)
 
 		if debug:
 			print("Point 1 is below and to the left of point 2")
-			print("Coefficient is negative, line goes from 2 to 1")
-			print(c)
+			print("Y coefficient:", c1)
+			print("X coefficient:", c2)
 
 	elif y2 > y1:
 		#Point 1 is above and to the left of point 2
@@ -123,16 +152,26 @@ elif x2 > x1:
 		tempX = x1
 		tempY = y1
 
+		#Draw line calculated around deltaY
 		while tempY < y2:
-			print("Temp X:", tempX)
-			addNextPoint(tempX, tempY, c)
-			tempX += c
+			tempX += c1
 			tempY += 1
+			g.addPoint(tempX, tempY)
+
+		#Reset temp values
+		tempX = x1
+		tempY = y1
+
+		#Draw line calculated around deltaX
+		while tempX < x2:
+			tempX += 1
+			tempY += c2
+			g.addPoint(tempX, tempY)
 
 		if debug:
 			print("Point 1 is above and to the left of point 2")
-			print("Coefficient is positive, line goes from 1 to 2")
-			print(c)
+			print("Y coefficient:", c1)
+			print("X coefficient:", c2)
 
 	elif y1 == y2:
 		#Point 1 is to the left of point 2
