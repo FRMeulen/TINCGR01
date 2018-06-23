@@ -49,20 +49,12 @@ class Cube:
 			(4, 0, 3, 6)
 		)
 
-		'''
 		glBegin(GL_QUADS)
-		glColor3fv((0, 0, 1))
-		glVertex3fv(self.vertices[5])
-		glVertex3fv(self.vertices[4])
-		glVertex3fv(self.vertices[6])
-		glVertex3fv(self.vertices[7])
-		glColor3fv((0, 0.8, 0.8))
-		glVertex3fv(self.vertices[2])
-		glVertex3fv(self.vertices[3])
-		glVertex3fv(self.vertices[6])
-		glVertex3fv(self.vertices[7])
+		glColor3fv((0, 1, 1))
+		for face in self.faces:
+			for vertex in face:
+				glVertex3fv(self.vertices[vertex])
 		glEnd()
-		'''
 
 		glBegin(GL_LINES)
 		glColor3fv((0, 0, 1))
@@ -105,17 +97,10 @@ class Pyramid:
 		)
 
 		glBegin(GL_QUADS)
-		glColor3fv((0, 0, 1))
-		glVertex3fv(self.vertices[3])
-		glVertex3fv(self.vertices[1])
-		glVertex3fv(self.vertices[4])
-		glEnd()
-
-		glBegin(GL_QUADS)
-		glColor3fv((0, 0.5, 1))
-		glVertex3fv(self.vertices[0])
-		glVertex3fv(self.vertices[3])
-		glVertex3fv(self.vertices[4])
+		glColor3fv((0, 1, 1))
+		for face in self.faces:
+			for vertex in face:
+				glVertex3fv(self.vertices[vertex])
 		glEnd()
 
 		glBegin(GL_LINES)
@@ -171,14 +156,12 @@ class Walls:
 				glVertex3fv(self.vertices[vertex])
 		glEnd()
 
-		'''
 		glBegin(GL_LINES)
 		glColor3fv((0, 0, 1))
 		for edge in self.edges:
 			for vertex in edge:
 				glVertex3fv(self.vertices[vertex])
 		glEnd()
-		'''
 
 class Crystal:
 	def __init__(self, x, y, z):
@@ -186,30 +169,59 @@ class Crystal:
 		self.y = y
 		self.z = z
 
-		glMatrixMode(GL_MODELVIEW)
+		self.vertices = (
+			(self.x, self.y + 5.0/3.0, self.z),
+			(self.x - 1, self.y + 1, self.z - 1),
+			(self.x + 1, self.y + 1, self.z - 1),
+			(self.x + 1, self.y - 1, self.z - 1),
+			(self.x - 1, self.y - 1, self.z - 1),
+			(self.x - 1, self.y + 1, self.z + 1),
+			(self.x + 1, self.y + 1, self.z + 1),
+			(self.x + 1, self.y - 1, self.z + 1),
+			(self.x - 1, self.y - 1, self.z + 1),
+			(self.x, self.y - 5.0/3.0, self.z)
+		)
 
-		#Cetral cube rotated 60 degrees
-		glPushMatrix()
-		glRotatef(60, 0, 1, 0)
-		Cube(self.x, self.y, self.z)
-		glPopMatrix()
+		self.edges = (
+			(0, 1),
+			(0, 2),
+			(0, 5),
+			(0, 6),
+			(1, 4),
+			(2, 3),
+			(5, 8),
+			(6, 7),
+			(3, 9),
+			(4, 9),
+			(7, 9),
+			(8, 9)
+		)
 
-		#Bottom point
-		glPushMatrix()
-		glRotatef(60, 0, 1, 0)
-		glRotatef(90, 1, 0, 0)
-		glTranslatef(0, 0, 2)
-		Pyramid(self.x, self.y, self.z)
-		glPopMatrix()
-		
-		#Top point
-		glPushMatrix()
-		glRotatef(-120, 0, 1, 0)
-		glRotatef(-90, 1, 0, 0)
-		glTranslatef(0, 0, 2)
-		Pyramid(self.x, self.y, self.z)
-		glPopMatrix()
+		self.faces = (
+			(0, 1, 2),
+			(0, 2, 6),
+			(0, 5, 6),
+			(0, 5, 1),
+			(1, 2, 3, 4),
+			(2, 3, 6, 7),
+			(5, 6, 7, 8),
+			(1, 4, 8, 5),
+			(4, 3, 9),
+			(7, 3, 9),
+			(7, 8, 9),
+			(8, 4, 9)
+		)
 
-		#Cube around the center
-		#Pyramid on each face
-		#Rotate pyramids right
+		glBegin(GL_QUADS)
+		glColor3fv((0, 1, 1))
+		for face in self.faces:
+			for vertex in face:
+				glVertex3fv(self.vertices[vertex])
+		glEnd()
+
+		glBegin(GL_LINES)
+		glColor3fv((0, 0, 1))
+		for edge in self.edges:
+			for vertex in edge:
+				glVertex3fv(self.vertices[vertex])
+		glEnd()
